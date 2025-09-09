@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Whack-a-Mole Game</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="flex items-center justify-center min-h-screen bg-gradient-to-br from-green-200 to-yellow-100">
+    <div id="gameContainer" class="flex flex-col items-center space-y-4">
+        <h1 class="text-3xl font-bold">Whack-a-Mole 🐹</h1>
+        <div class="flex space-x-4">
+            <button id="startBtn"
+                class="px-4 py-2 rounded-xl bg-green-500 text-white font-semibold shadow hover:bg-green-600">開始遊戲</button>
+            <button id="stopBtn"
+                class="px-4 py-2 rounded-xl bg-red-500 text-white font-semibold shadow hover:bg-red-600">結束遊戲</button>
+        </div>
+        <div id="scoreBoard" class="text-xl font-semibold">分數: 0 | 時間: 60</div>
+        <div id="gameBoard" class="grid gap-4 justify-center mx-auto"></div>
+    </div>
+
+    <script>
+        const config = {
+            gridRows: 2,
+            gridCols: 3,
+            moleIcon: '🐹',
+            background: 'bg-gradient-to-br from-green-200 to-yellow-100',
+            cellBg: 'bg-slate-900/90',
+            cellSize: 80,         // 格子大小 (px)
+            cellRound: 'full',   // 圓角選項: 'none', 'lg', 'xl', '2xl', '3xl', 'full'
+            moleMinTime: 500,
+            moleMaxTime: 1500,
+            gameDuration: 60,
+        };
+
+        const board = document.getElementById('gameBoard');
+        const scoreBoard = document.getElementById('scoreBoard');
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+
+        let score = 0;
+        let timeLeft = config.gameDuration;
+        let timer;
+        let moleTimers = [];
+        let gameActive = false;
+
+        function createBoard(rows, cols) {
+            board.innerHTML = '';
+            board.style.gridTemplateColumns = `repeat(${cols}, ${config.cellSize}px)`;
+            for (let i = 0; i < rows * cols; i++) {
+                const cell = document.createElement('div');
+                cell.className = [
+                    `relative w-[${config.cellSize}px] h-[${config.cellSize}px] rounded-${config.cellRound} shadow ${config.cellBg}`,
+                    'ring-1 ring-black/20 overflow-hidden hole flex items-center justify-center text-3xl select-none cursor-pointer',
+                ].join(' ');
+                board.appendChild(cell);
+            }
+        }
+
+        function randomTime(min, max) {
+            return Math.round(Math.random() * (max - min) + min);
+        }
+
+        function randomCell() {
+            const holes = document.querySelectorAll('.hole');
+            return holes[Math.floor(Math.random() * holes.length)];
+        }
+
+        function showMole() {
+            if (!gameActive) return;
+            const time = randomTime(config.moleMinTime, config.moleMaxTime);
+            const hole = randomCell();
+            const mole = document.createElement('span');
+            mole.textContent = config.moleIcon;
+            mole.className = 'mole absolute inset-0 flex items-center justify-center text-4xl';
+            mole.addEventListener('click', () => {
+                if (mole.parentNode) {
+                    score++;
+                    updateScore();
+                    mole.remove();
+                }
+            });
+            hole.appendChild(mole);
+            const t = setTimeout(() => {
+                mole.remove();
+            }, time);
+            moleTimers.push(t);
+            const next = randomTime(300, 1000);
+            const nextTimer = setTimeout(showMole, next);
+            moleTimers.push(nextTimer);
+        }
+
+        function updateScore() {
+            scoreBoard.textContent = `分數: ${score} | 時間: ${timeLeft}`;
+        }
+
+        function startGame() {
+            if (gameActive) return;
+            gameActive = true;
+            score = 0;
+            timeLeft = config.gameDuration;
+            updateScore();
+            createBoard(config.gridRows, config.gridCols);
+            showMole();
+            timer = setInterval(() => {
+                timeLeft--;
+                updateScore();
+                if (timeLeft <= 0) {
+                    stopGame();
+                }
+            }, 1000);
+        }
+
+        function stopGame() {
+            gameActive = false;
+            clearInterval(timer);
+            moleTimers.forEach(clearTimeout);
+            moleTimers = [];
+            alert(`遊戲結束！你的分數是 ${score}`);
+        }
+
+        startBtn.addEventListener('click', startGame);
+        stopBtn.addEventListener('click', stopGame);
+
+        createBoard(config.gridRows, config.gridCols);
+    </script>
+</body>
+
+</html>

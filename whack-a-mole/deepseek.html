@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>打地鼠遊戲</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .hole {
+            transition: all 0.3s ease;
+        }
+
+        .mole {
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="brown"/><circle cx="35" cy="40" r="5" fill="black"/><circle cx="65" cy="40" r="5" fill="black"/><path d="M40 65 Q50 75 60 65" stroke="black" stroke-width="3" fill="none"/></svg>');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            cursor: pointer;
+        }
+
+        .hit-effect {
+            animation: hit 0.3s;
+        }
+
+        @keyframes hit {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(0.8);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-green-100 min-h-screen flex flex-col items-center justify-center p-4">
+    <h1 class="text-4xl font-bold text-green-800 mb-6">打地鼠遊戲</h1>
+
+    <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-2xl">
+        <!-- 游戏控制区 -->
+        <div class="flex justify-between items-center mb-6">
+            <div class="text-2xl font-semibold">
+                分數: <span id="score" class="text-green-600">0</span>
+            </div>
+            <div class="text-2xl font-semibold">
+                時間: <span id="timer" class="text-red-600">60</span>秒
+            </div>
+        </div>
+
+        <!-- 游戏区域 -->
+        <div id="game-board" class="grid grid-cols-3 gap-4 mb-6">
+            <!-- 地鼠洞将由JS动态生成 -->
+        </div>
+
+        <!-- 按钮控制 -->
+        <div class="flex justify-center space-x-4">
+            <button id="start-btn"
+                class="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">開始遊戲</button>
+            <button id="stop-btn" class="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+                disabled>結束遊戲</button>
+        </div>
+
+        <!-- 配置区域 -->
+        <div class="mt-6 p-4 bg-gray-100 rounded-lg">
+            <h2 class="text-xl font-semibold mb-3">遊戲配置</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">地鼠洞數量</label>
+                    <input type="number" id="holes-count" min="1" max="12" value="6"
+                        class="mt-1 p-2 border rounded-md w-full">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">地鼠出現時間(毫秒)</label>
+                    <input type="number" id="mole-duration" min="500" max="3000" value="1500"
+                        class="mt-1 p-2 border rounded-md w-full">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">洞背景顏色</label>
+                    <input type="color" id="hole-color" value="#8B4513" class="mt-1 p-2 border rounded-md w-full h-10">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">遊戲時間(秒)</label>
+                    <input type="number" id="game-time" min="10" max="120" value="60"
+                        class="mt-1 p-2 border rounded-md w-full">
+                </div>
+            </div>
+            <button id="apply-config"
+                class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">應用配置</button>
+        </div>
+    </div>
+
+    <script>
+        // 遊戲配置
+        const config = {
+            holes: 6,
+            moleDuration: 1500,
+            holeColor: '#8B4513',
+            gameTime: 60
+        };
+
+        // 遊戲狀態
+        let gameState = {
+            score: 0,
+            timeLeft: config.gameTime,
+            isPlaying: false,
+            timer: null,
+            moleTimer: null
+        };
+
+        // DOM 元素
+        const gameBoard = document.getElementById('game-board');
+        const scoreDisplay = document.getElementById('score');
+        const timerDisplay = document.getElementById('timer');
+        const startBtn = document.getElementById('start-btn');
+        const stopBtn = document.getElementById('stop-btn');
+        const holesCountInput = document.getElementById('holes-count');
+        const moleDurationInput = document.getElementById('mole-duration');
+        const holeColorInput = document.getElementById('hole-color');
+        const gameTimeInput = document.getElementById('game-time');
+        const applyConfigBtn = document.getElementById('apply-config');
+
+        // 初始化遊戲
+        function initGame() {
+            // 清除遊戲板
+            gameBoard.innerHTML = '';
+
+            // 設置網格列數
+            const gridCols = config.holes <= 3 ? 3 : config.holes <= 6 ? 3 : 4;
+            gameBoard.className = `grid grid-cols-${gridCols} gap-4 mb-6`;
+
+            // 創建地鼠洞
+            for (let i = 0; i < config.holes; i++) {
+                const hole = document.createElement('div');
+                hole.className = 'hole w-full h-24 rounded-full bg-[#8B4513] relative overflow-hidden';
+                hole.style.backgroundColor = config.holeColor;
+                hole.dataset.index = i;
+
+                const mole = document.createElement('div');
+                mole.className = 'mole absolute inset-0 opacity-0 transition-opacity duration-300';
+
+                hole.appendChild(mole);
+                gameBoard.appendChild(hole);
+
+                // 添加點擊事件
+                mole.addEventListener('click', () => {
+                    if (mole.classList.contains('opacity-100')) {
+                        hitMole(mole);
+                    }
+                });
+            }
+
+            // 更新顯示
+            updateDisplay();
+        }
+
+        // 開始遊戲
+        function startGame() {
+            if (gameState.isPlaying) return;
+
+            gameState.isPlaying = true;
+            gameState.score = 0;
+            gameState.timeLeft = config.gameTime;
+
+            startBtn.disabled = true;
+            stopBtn.disabled = false;
+
+            updateDisplay();
+
+            // 開始計時
+            gameState.timer = setInterval(() => {
+                gameState.timeLeft--;
+                timerDisplay.textContent = gameState.timeLeft;
+
+                if (gameState.timeLeft <= 0) {
+                    endGame();
+                }
+            }, 1000);
+
+            // 開始出現地鼠
+            showRandomMole();
+        }
+
+        // 結束遊戲
+        function endGame() {
+            if (!gameState.isPlaying) return;
+
+            gameState.isPlaying = false;
+            clearInterval(gameState.timer);
+            clearTimeout(gameState.moleTimer);
+
+            startBtn.disabled = false;
+            stopBtn.disabled = true;
+
+            // 隱藏所有地鼠
+            document.querySelectorAll('.mole').forEach(mole => {
+                mole.classList.remove('opacity-100');
+            });
+
+            alert(`遊戲結束！您的得分是：${gameState.score}`);
+        }
+
+        // 顯示隨機地鼠
+        function showRandomMole() {
+            if (!gameState.isPlaying) return;
+
+            const holes = document.querySelectorAll('.hole');
+            const randomIndex = Math.floor(Math.random() * holes.length);
+            const mole = holes[randomIndex].querySelector('.mole');
+
+            // 顯示地鼠
+            mole.classList.add('opacity-100');
+
+            // 設置定時隱藏地鼠
+            setTimeout(() => {
+                if (mole.classList.contains('opacity-100')) {
+                    mole.classList.remove('opacity-100');
+                }
+
+                // 如果遊戲還在進行中，繼續顯示下一個地鼠
+                if (gameState.isPlaying) {
+                    gameState.moleTimer = setTimeout(showRandomMole, 100);
+                }
+            }, config.moleDuration);
+        }
+
+        // 擊中地鼠
+        function hitMole(mole) {
+            if (!gameState.isPlaying) return;
+
+            mole.classList.remove('opacity-100');
+            mole.classList.add('hit-effect');
+
+            // 增加分數
+            gameState.score++;
+            scoreDisplay.textContent = gameState.score;
+
+            // 移除動畫類
+            setTimeout(() => {
+                mole.classList.remove('hit-effect');
+            }, 300);
+        }
+
+        // 更新顯示
+        function updateDisplay() {
+            scoreDisplay.textContent = gameState.score;
+            timerDisplay.textContent = gameState.timeLeft;
+        }
+
+        // 應用配置
+        function applyConfig() {
+            config.holes = parseInt(holesCountInput.value) || 6;
+            config.moleDuration = parseInt(moleDurationInput.value) || 1500;
+            config.holeColor = holeColorInput.value;
+            config.gameTime = parseInt(gameTimeInput.value) || 60;
+
+            initGame();
+        }
+
+        // 事件監聽
+        startBtn.addEventListener('click', startGame);
+        stopBtn.addEventListener('click', endGame);
+        applyConfigBtn.addEventListener('click', applyConfig);
+
+        // 初始化遊戲
+        initGame();
+    </script>
+</body>
+
+</html>

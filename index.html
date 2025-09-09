@@ -1,195 +1,106 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>井字圈叉遊戲</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Fysh 資訊研究社</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* 可透過改這邊調整主題色 */
+        :root {
+            --primary-color: #3b82f6;
+            /* 活潑藍色 (Tailwind blue-500) */
+            --background-color: #f0f9ff;
+            /* 淺藍明亮背景 */
+            --card-bg-color: #ffffff;
+            /* 白色卡片背景 */
+        }
+    </style>
 </head>
-<body class="flex flex-col items-center justify-center min-h-screen bg-gray-300  p-4 bg-image bg-cover bg-center bg-no-repeat h-screen" style="background-image: url(background-image.jpg)">
-    
-  <h1 class="text-3xl font-bold mb-4">井字圈叉遊戲</h1>
 
-  <div id="board" class="grid grid-cols-3 gap-2 mb-4">
-    <!-- 9 個按鈕 -->
-    <button class="cell w-20 h-20 flex items-center justify-center text-2xl font-bold bg-white border rounded-lg shadow"></button>
-    <button class="cell w-20 h-20 flex items-center justify-center text-2xl font-bold bg-white border rounded-lg shadow"></button>
-    <button class="cell w-20 h-20 flex items-center justify-center text-2xl font-bold bg-white border rounded-lg shadow"></button>
-    <button class="cell w-20 h-20 flex items-center justify-center text-2xl font-bold bg-white border rounded-lg shadow"></button>
-    <button class="cell w-20 h-20 flex items-center justify-center text-2xl font-bold bg-white border rounded-lg shadow"></button>
-    <button class="cell w-20 h-20 flex items-center justify-center text-2xl font-bold bg-white border rounded-lg shadow"></button>
-    <button class="cell w-20 h-20 flex items-center justify-center text-2xl font-bold bg-white border rounded-lg shadow"></button>
-    <button class="cell w-20 h-20 flex items-center justify-center text-2xl font-bold bg-white border rounded-lg shadow"></button>
-    <button class="cell w-20 h-20 flex items-center justify-center text-2xl font-bold bg-white border rounded-lg shadow"></button>
-  </div>
+<body class="min-h-screen bg-[color:var(--background-color)] font-sans text-gray-800">
 
-  <p id="status" class="mb-4 text-lg">請按開始遊戲</p>
+    <header class="py-6 bg-[color:var(--primary-color)] text-white shadow-md sticky top-0 z-10">
+        <div class="container mx-auto px-4">
+            <h1 class="text-3xl font-bold">Fysh 資訊研究社</h1>
+            <p class="mt-1 text-lg">發現有趣且精彩的遊戲世界</p>
+        </div>
+    </header>
 
-  <div class="space-x-4">
-    <button id="startBtn" class="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600">開始</button>
-    <button id="resetBtn" class="hidden px-4 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600">清空</button>
-  </div>
+    <main class="container mx-auto px-4 py-8 space-y-12">
 
-  <!-- Modal -->
-  <div id="modal" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-    <div class="bg-white p-6 rounded-lg shadow-lg text-center">
-      <h2 id="modalMessage" class="text-xl font-bold mb-4"></h2>
-      <button id="closeModal" class="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600">確定</button>
-    </div>
-  </div>
+        <!-- 遊戲分類 -->
+        <section>
+            <h2 class="text-2xl font-semibold mb-6 border-b-4 border-[color:var(--primary-color)] inline-block pb-1">
+                AI們的打地鼠遊戲
+            </h2>
+            <div class="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
 
-  <script>
-    const cells = document.querySelectorAll('.cell');
-    const statusText = document.getElementById('status');
-    const startBtn = document.getElementById('startBtn');
-    const resetBtn = document.getElementById('resetBtn');
-    const modal = document.getElementById('modal');
-    const modalMessage = document.getElementById('modalMessage');
-    const closeModal = document.getElementById('closeModal');
+                <a href="/whack-a-mole/gemini.html"
+                    class="block bg-[color:var(--card-bg-color)] rounded-lg shadow-lg hover:shadow-xl transition-shadow p-4 cursor-pointer">
+                    <img src="https://example.com/images/fysh-run.jpg" alt="Fysh Run"
+                        class="w-full h-48 object-cover rounded-md mb-3" />
+                    <h3 class="text-xl font-semibold mb-2">Gemini</h3>
+                    <p class="text-gray-600">Gemini打地鼠遊戲</p>
+                </a>
 
-    let board = Array(9).fill(null);
-    let isUserTurn = true;
-    let gameActive = false;
+                <a href="/whack-a-mole/perplexity.html"
+                    class="block bg-[color:var(--card-bg-color)] rounded-lg shadow-lg hover:shadow-xl transition-shadow p-4 cursor-pointer">
+                    <img src="https://example.com/images/fysh-battle.jpg" alt="Fysh Battle"
+                        class="w-full h-48 object-cover rounded-md mb-3" />
+                    <h3 class="text-xl font-semibold mb-2">perplexity</h3>
+                    <p class="text-gray-600">perplexity打地鼠遊戲</p>
+                </a>
 
-    const winningPatterns = [
-      [0,1,2],[3,4,5],[6,7,8],
-      [0,3,6],[1,4,7],[2,5,8],
-      [0,4,8],[2,4,6]
-    ];
+                <a href="/whack-a-mole/chatgpt.html"
+                    class="block bg-[color:var(--card-bg-color)] rounded-lg shadow-lg hover:shadow-xl transition-shadow p-4 cursor-pointer">
+                    <img src="https://example.com/images/fysh-battle.jpg" alt="Fysh Battle"
+                        class="w-full h-48 object-cover rounded-md mb-3" />
+                    <h3 class="text-xl font-semibold mb-2">Chatgpt</h3>
+                    <p class="text-gray-600">Chatgpt打地鼠遊戲</p>
+                </a>
 
-    function checkWinner(newBoard) {
-      for (let pattern of winningPatterns) {
-        const [a,b,c] = pattern;
-        if (newBoard[a] && newBoard[a] === newBoard[b] && newBoard[a] === newBoard[c]) {
-          return newBoard[a];
-        }
-      }
-      return null;
-    }
+                <a href="/whack-a-mole/windsurf.html"
+                    class="block bg-[color:var(--card-bg-color)] rounded-lg shadow-lg hover:shadow-xl transition-shadow p-4 cursor-pointer">
+                    <img src="https://example.com/images/fysh-battle.jpg" alt="Fysh Battle"
+                        class="w-full h-48 object-cover rounded-md mb-3" />
+                    <h3 class="text-xl font-semibold mb-2">deepseek</h3>
+                    <p class="text-gray-600">deepseek打地鼠遊戲</p>
+                </a>
 
-    function systemMove(newBoard) {
-      const available = newBoard.map((v,i)=> v===null?i:null).filter(v=>v!==null);
-      if (available.length === 0) return newBoard;
-      const randomIndex = available[Math.floor(Math.random()*available.length)];
-      newBoard[randomIndex] = "O";
-      cells[randomIndex].textContent = "O";
-      return newBoard;
-    }
 
-    function handleClick(index) {
-      if (!gameActive || !isUserTurn || board[index]) return;
 
-      // 玩家下子，先鎖住玩家回合
-      isUserTurn = false;
-      statusText.textContent = "系統回合";
-      board[index] = "X";
-      cells[index].textContent = "X";
+            </div>
+        </section>
 
-      let winner = checkWinner(board);
-      if (winner) {
-        showModal(`玩家 (${winner}) 獲勝!`);
-        endGame();
-        return;
-      }
 
-      if (!board.includes(null)) {
-        showModal("平手!");
-        endGame();
-        return;
-      }
+        <!-- 遊戲分類 -->
+        <section>
+            <h2 class="text-2xl font-semibold mb-6 border-b-4 border-[color:var(--primary-color)] inline-block pb-1">
+                井字圈叉遊戲
+            </h2>
+            <div class="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
 
-      // 系統下子（模擬思考延遲）
-      setTimeout(() => {
-        board = systemMove([...board]);
+                <a href="/tic-tac-toe/index.html"
+                    class="block bg-[color:var(--card-bg-color)] rounded-lg shadow-lg hover:shadow-xl transition-shadow p-4 cursor-pointer">
+                    <img src="https://example.com/images/fysh-fishing.jpg" alt="Fysh Fishing"
+                        class="w-full h-48 object-cover rounded-md mb-3" />
+                    <h3 class="text-xl font-semibold mb-2">Chatgpt</h3>
+                    <p class="text-gray-600">Chatgpt井字圈叉遊戲</p>
+                </a>
 
-        winner = checkWinner(board);
-        if (winner) {
-          showModal(`系統 (${winner}) 獲勝!`);
-          endGame();
-          return;
-        }
 
-        if (!board.includes(null)) {
-          showModal("平手!");
-          endGame();
-          return;
-        }
 
-        isUserTurn = true;
-        statusText.textContent = "玩家回合";
-      }, 250);
-    }
+            </div>
+        </section>
 
-    function startGame() {
-      // 先清空並初始化盤面
-      resetGame();
-      board = Array(9).fill(null);
-      gameActive = true;
+    </main>
 
-      const userStarts = Math.random() > 0.5;
+    <footer class="py-6 text-center text-gray-500 text-sm bg-white border-t mt-12">
+        © 2025 Fysh Games. 版權所有。
+    </footer>
 
-      if (userStarts) {
-        // 玩家先手：允許玩家點擊
-        isUserTurn = true;
-        statusText.textContent = "玩家先手";
-      } else {
-        // 系統先手：在系統下子期間鎖住玩家輸入
-        isUserTurn = false;
-        statusText.textContent = "系統先手...";
-
-        // 給 UI 一點時間更新，再由系統下子並檢查結果
-        setTimeout(() => {
-          board = systemMove([...board]);
-
-          const winner = checkWinner(board);
-          if (winner) {
-            showModal(`系統 (${winner}) 獲勝!`);
-            endGame();
-            return;
-          }
-
-          if (!board.includes(null)) {
-            showModal("平手!");
-            endGame();
-            return;
-          }
-
-          // 系統下完後，輪到玩家
-          isUserTurn = true;
-          statusText.textContent = "輪到玩家";
-        }, 300);
-      }
-    }
-
-    function resetGame() {
-      board = Array(9).fill(null);
-      cells.forEach(cell => cell.textContent = "");
-      gameActive = false;
-      isUserTurn = true;
-      statusText.textContent = "請按開始遊戲";
-    }
-
-    function endGame() {
-      gameActive = false;
-    }
-
-    function showModal(message) {
-      modalMessage.textContent = message;
-      modal.classList.remove('hidden');
-    }
-
-    closeModal.addEventListener('click', () => {
-      modal.classList.add('hidden');
-      resetGame();
-    });
-
-    cells.forEach((cell,index)=>{
-      cell.addEventListener('click', ()=>handleClick(index));
-    });
-
-    startBtn.addEventListener('click', startGame);
-    resetBtn.addEventListener('click', resetGame);
-  </script>
 </body>
+
 </html>

@@ -79,23 +79,5 @@
 
 ***
 
-這份簡報內容透過分段講解，搭配活潑有趣的遊戲示例，幫助學生立即上手前端互動設計。
-
-[^1]: https://steam.oxxostudio.tw/category/scratch/example/ooxx.html
-
-[^2]: https://cyjesf.eduweb.tw/cyjesf37/Upfile/final/井底之「雞」.pdf
-
-[^3]: https://twsf.ntsec.gov.tw/activity/race-1/62/pdf/NPHSF2022-030409.pdf?0.08148897485807538
-
-[^4]: https://www.youtube.com/watch?v=S5rel-nV-cs
-
-[^5]: https://sciexplore2022.colife.org.tw/uploadfiles/TM1843f45863/TM1843f45863.pdf
-
-[^6]: https://cedu.nutn.edu.tw/cedu/upload/files/56(1)教育-第一篇.pdf
-
-[^7]: https://gifted.ntpc.edu.tw/AYFiles/114/NewsEventFile/18204/113實踐國小_%E6%95%B8%E5%AD%B8%E9%A1%9E_%E5%A5%87%E3%80%8C%E9%9B%9E%E3%80%8D%E9%80%A3%E9%80%A3%E6%A1%8C%E9%81%8A%E7%AD%96%E7%95%A5%E5%8F%8A%E5%BB%B6%E4%BC%B8%E8%A6%8F%E5%89%87%E4%B9%8B%E7%A0%94%E7%A9%B6.pdf
-
-[^8]: https://maker.tn.edu.tw/modules/tad_book3/page.php?tbsn=2\&tbdsn=159
-
-[^9]: https://amathing.world/tic-tac-ku/
-
+# ai story
+我想創建一個3x3井字圈叉遊戲，圈叉遊戲只有一個頁面，頁面有"開始"按鈕、"清空"按鈕，清空表示清空井字圈叉遊戲數據，"開始"表示開始遊戲，可以由使用者開始填入圈叉，也可以系統自行填入，兩者的填入是隨機的，畫面顯示目前是由使用者填入或是系統先填入，由使用者開始填入時使用者填入後系統自行填入，然後再由使用者填入接著系統填入，反之亦然，獲勝時跳出獲勝畫面，然後清空圈叉遊戲數據，圈叉遊戲數據由陣列儲存，陣列數據填滿時表示遊戲完成並結束。頁面布局使用tailwindcss，請幫我生成
